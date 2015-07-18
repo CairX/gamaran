@@ -10,16 +10,27 @@ def each(data, template):
     pattern = "({{#each (.*?)}}(.*?){{/each}})"
     all_each = re.findall(pattern, template, re.DOTALL)
 
-    one_each = all_each[0]
-    one_each_data = data[one_each[1]]
-    one_each_template = one_each[2]
-    one_each_original = one_each[0]
-    one_each_result = ""
+    for one_each in all_each:
+        # one_each = all_each[0]
+        one_each_data = data[one_each[1]]
+        one_each_template = one_each[2]
+        one_each_original = one_each[0]
+        one_each_result = ""
 
-    for item in one_each_data:
-        one_each_result += replace(item, one_each_template)
+        for item in one_each_data:
+            one_each_result += replace(item, one_each_template)
 
-    return template.replace(one_each_original, one_each_result, 1)
+        template = template.replace(one_each_original, one_each_result, 1)
+
+    return template
+
+
+def compare(s1, s2):
+    for i in range(len(s1)):
+        if s1[i] != s2[i]:
+            print(i)
+            print(s1[i] + " :: " + s2[i])
+            break
 
 
 def replace(data, template):
@@ -32,15 +43,20 @@ def replace(data, template):
 
 
 if __name__ == "__main__":
-    # data_path = "data/one.json"
-    # template_path = "data/one.html"
+    tests = ["one", "collection"]
 
-    data_path = "data/collection.json"
-    template_path = "data/collection.html"
+    for test in tests:
+        data_path = "data/each/" + test + ".json"
+        template_path = "data/each/" + test + ".html"
+        expected_path = "data/each/" + test + ".expected.html"
 
-    with open(data_path) as data_file, open(template_path) as template_file:
-        data = json.load(data_file)
-        template = template_file.read()
+        with open(data_path) as data_file, open(template_path) as template_file:
+            data = json.load(data_file)
+            template = template_file.read()
 
-        print(each(data, template))
-        # print(replace(data, template))
+            result = each(data, template)
+            result = replace(data, result)
+
+            with open(expected_path) as expected_file:
+                expected = expected_file.read()
+                print(test + ": " + str(result == expected))

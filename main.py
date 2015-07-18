@@ -25,11 +25,15 @@ def each(data, template):
     return template
 
 
-def compare(s1, s2):
-    for i in range(len(s1)):
-        if s1[i] != s2[i]:
-            print(i)
-            print(s1[i] + " :: " + s2[i])
+def compare(expected, s):
+    l1 = expected.splitlines()
+    l2 = s.splitlines()
+
+    for i in range(len(l1)):
+        if l1[i] != l2[i]:
+            print("Line " + str(i + 1))
+            print("Expected: " + repr(l1[i]))
+            print("Was: " + repr(l2[i]))
             break
 
 
@@ -43,7 +47,7 @@ def replace(data, template):
 
 
 if __name__ == "__main__":
-    tests = ["one", "collection"]
+    tests = ["one", "collection", "multiple"]
 
     for test in tests:
         data_path = "data/each/" + test + ".json"
@@ -59,4 +63,8 @@ if __name__ == "__main__":
 
             with open(expected_path) as expected_file:
                 expected = expected_file.read()
-                print(test + ": " + str(result == expected))
+                if result == expected:
+                    print(test + ": Passed")
+                else:
+                    print(test + ": Failed")
+                    compare(expected, result)

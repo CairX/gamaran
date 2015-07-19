@@ -80,11 +80,11 @@ def scope(data, template, level):
             tag_start_index = index - (len(buff) - 1)
             tag_end_index = template.find("}}", tag_start_index) + len("}}")
             tag = template[tag_start_index:tag_end_index]
-            print("Tag:" + tag + " " + str(tag_start_index) + " to " + str(tag_end_index))
+            # print("Tag:" + tag + " " + str(tag_start_index) + " to " + str(tag_end_index))
 
             # Get data key from the tag.
             key = tag[len(start): -2]
-            print("Key:" + key)
+            # print("Key:" + key)
 
             # Get template used for the next scope.
             # This is from where the tag ends to the end.
@@ -126,7 +126,7 @@ def scope(data, template, level):
             buff = ""
         elif buff == end:
             # print(str(index) + ": " + buff)
-            to_replace = template[:index - len(buff)]
+            to_replace = template[:index - (len(buff) - 1)]
             # print("//////////////")
             # print(to_replace)
             # print("//////////////")
@@ -139,32 +139,42 @@ def scope(data, template, level):
         else:
             index += 1
 
+    template = variables(data, template)
+
     return template, index
 
 
 if __name__ == "__main__":
     # "one",, "multiple", "nested"
-    tests = ["nested"]
+    tests = ["one", "collection", "multiple", "nested"]
 
     for test in tests:
         data_path = "data/each/" + test + ".json"
         template_path = "data/each/" + test + ".html"
         expected_path = "data/each/" + test + ".expected.html"
+        result_path = "data/each/" + test + ".result.html"
 
         with open(data_path) as data_file, open(template_path) as template_file:
             data = json.load(data_file)
             template = template_file.read()
+
             scope_result, scope_end_index = scope(data, template, 0)
-            print(scope_end_index)
-            print("###:: " + scope_result)
-        #     result = each(data, template)
-        #     result = variables(data, result)
-        #     # print(result)
-        #
-        #     with open(expected_path) as expected_file:
-        #         expected = expected_file.read()
-        #         if result == expected:
-        #             print(test + ": Passed")
-        #         else:
-        #             print(test + ": Failed")
-        #             compare(expected, result)
+            result = scope_result
+            # print(scope_end_index)
+            # print("###:: " + scope_result)
+            # result = each(data, template)
+            # result = variables(data, result)
+            # print(result)
+
+            with open(expected_path) as expected_file:
+                expected = expected_file.read()
+                print("---")
+                if result == expected:
+                    print(test + ": Passed")
+                else:
+                    print(test + ": Failed")
+                    compare(expected, result)
+
+            with open(result_path, "w") as result_file:
+                result_file.write(result)
+                print("Result stored: " + result_path)

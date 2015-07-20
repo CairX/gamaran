@@ -1,5 +1,6 @@
 import json
 import re
+import time
 
 
 def clean(variable):
@@ -87,6 +88,10 @@ def scope(data, template, level):
 
 
 def run_test(package, test):
+    # Start a timer for execution time.
+    start = time.clock()
+
+    # Paths
     data_path = "data/{0}/{1}/data.json".format(package, test)
     template_path = "data/{0}/{1}/template.html".format(package, test)
     expected_path = "data/{0}/{1}/expected.html".format(package, test)
@@ -112,6 +117,8 @@ def run_test(package, test):
         with open(result_path, "w") as result_file:
             result_file.write(result)
             print("Result stored: " + result_path)
+
+    print("Time: " + str(time.clock() - start))
 
 
 if __name__ == "__main__":

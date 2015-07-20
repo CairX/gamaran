@@ -86,30 +86,40 @@ def scope(data, template, level):
     return template, index
 
 
+def run_test(package, test):
+    data_path = "data/{0}/{1}/data.json".format(package, test)
+    template_path = "data/{0}/{1}/template.html".format(package, test)
+    expected_path = "data/{0}/{1}/expected.html".format(package, test)
+    result_path = "data/{0}/{1}/result.html".format(package, test)
+
+    with open(data_path) as data_file, open(template_path) as template_file:
+        data = json.load(data_file)
+        template = template_file.read()
+
+        # Initiate the parsen with the global as the most outer scope.
+        result, index = scope(data, template, 0)
+
+        with open(expected_path) as expected_file:
+            expected = expected_file.read()
+            print("")
+            if result == expected:
+                print(package + "/" + test + ": Passed")
+            else:
+                print(package + "/" + test + ": Failed")
+                compare(expected, result)
+
+        # Store the result for easier viewing for cases when a test fails.
+        with open(result_path, "w") as result_file:
+            result_file.write(result)
+            print("Result stored: " + result_path)
+
+
 if __name__ == "__main__":
-    tests = ["one", "collection", "multiple", "nested"]
+    packages = {
+        "global": ["single"],
+        "each": ["collection", "multiple", "nested"]
+    }
 
-    for test in tests:
-        data_path = "data/each/" + test + ".json"
-        template_path = "data/each/" + test + ".html"
-        expected_path = "data/each/" + test + ".expected.html"
-        result_path = "data/each/" + test + ".result.html"
-
-        with open(data_path) as data_file, open(template_path) as template_file:
-            data = json.load(data_file)
-            template = template_file.read()
-
-            result, index = scope(data, template, 0)
-
-            with open(expected_path) as expected_file:
-                expected = expected_file.read()
-                print("---")
-                if result == expected:
-                    print(test + ": Passed")
-                else:
-                    print(test + ": Failed")
-                    compare(expected, result)
-
-            with open(result_path, "w") as result_file:
-                result_file.write(result)
-                print("Result stored: " + result_path)
+    for package, tests in packages.items():
+        for test in tests:
+            run_test(package, test)

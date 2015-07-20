@@ -20,10 +20,15 @@ def compare(expected, s):
 
 
 def variables(data, template):
-    variables = re.findall("{{[^#/].*?}}", template)
+    tags = re.findall("{{[^#/].*?}}", template)
 
-    for variable in variables:
-        template = template.replace(variable, data[clean(variable)], 1)
+    for tag in tags:
+        variable = clean(tag)
+        if variable == "this":
+            d = data
+        else:
+            d = data[variable]
+        template = template.replace(tag, d, 1)
 
     return template
 
@@ -124,7 +129,7 @@ def run_test(package, test):
 if __name__ == "__main__":
     packages = {
         "global": ["single"],
-        "each": ["collection", "multiple", "nested"]
+        "each": ["collection", "multiple", "nested", "this"]
     }
 
     for package, tests in packages.items():

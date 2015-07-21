@@ -2,6 +2,13 @@ import json
 import re
 import time
 
+debug = False
+
+
+def log(string):
+    if debug:
+        print(string)
+
 
 def clean(variable):
     return variable[2:-2]
@@ -34,6 +41,8 @@ def variables(data, template):
 
 
 def scope(data, template, level):
+    log("----- # Level " + str(level) + " -----")
+
     start = "{{#each "
     end = "{{/each}}"
     buff = ""
@@ -57,15 +66,21 @@ def scope(data, template, level):
 
             # Get data key from the tag.
             key = tag[len(start): -2]
+            log("Key: " + key)
 
             # Get template used for the next scope.
             # This is from where the tag ends to the end.
             template_part = template[tag_end_index:]
 
             loop_result = ""
+
             # Time to do the loop part of the each function.
-            for item in data[key]:
-                scope_result, scope_end_index = scope(item, template_part, level + 1)
+            if data[key]:
+                for item in data[key]:
+                    scope_result, scope_end_index = scope(item, template_part, level + 1)
+                    loop_result += scope_result
+            else:
+                scope_result, scope_end_index = scope({}, template_part, level + 1)
                 loop_result += scope_result
 
             # Replace the tag and it's content witht the scope results.
@@ -81,7 +96,12 @@ def scope(data, template, level):
             buff = ""
         elif buff == end:
             template_part = template[:index - (len(buff) - 1)]
-            template = variables(data, template_part)
+            if data:
+                template = variables(data, template_part)
+            else:
+                template = ""
+
+            log("----- / Level " + str(level) + " -----")
             if level > 0:
                 return template, index
         else:
@@ -109,6 +129,12 @@ def run_test(package, test):
         # Initiate the parsen with the global as the most outer scope.
         result, index = scope(data, template, 0)
 
+        # Store the result for easier viewing for cases when a test fails.
+        with open(result_path, "w") as result_file:
+            result_file.write(result)
+            print("Result stored: " + result_path)
+
+        # Validate the test.
         with open(expected_path) as expected_file:
             expected = expected_file.read()
             print("")
@@ -118,18 +144,13 @@ def run_test(package, test):
                 print(package + "/" + test + ": Failed")
                 compare(expected, result)
 
-        # Store the result for easier viewing for cases when a test fails.
-        with open(result_path, "w") as result_file:
-            result_file.write(result)
-            print("Result stored: " + result_path)
-
     print("Time: " + str(time.clock() - start))
 
 
 if __name__ == "__main__":
     packages = {
         "global": ["single"],
-        "each": ["collection", "multiple", "nested", "this"]
+        "each": ["collection", "empty", "multiple", "nested", "this"]
     }
 
     for package, tests in packages.items():

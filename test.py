@@ -1,6 +1,6 @@
 import json
 import time
-from parser import scope
+from parser import parse
 
 
 def compare(expected, s):
@@ -32,7 +32,7 @@ def run_test(package, test):
         template = template_file.read()
 
         # Initiate the parsen with the global as the most outer scope.
-        result, index = scope(data, template, 0)
+        result, index = parse(data, template, 0)
 
         # Store the result for easier viewing for cases when a test fails.
         with open(result_path, "w") as result_file:
@@ -56,7 +56,7 @@ def run_test(package, test):
 if __name__ == "__main__":
     packages = {
         "global": ["single"],
-        "each": ["collection", "empty", "multiple", "nested", "this"]
+        "each": ["collection"]  # , "empty", "multiple", "nested", "this"]
     }
 
     for package, tests in packages.items():

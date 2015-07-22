@@ -9,15 +9,17 @@ def compare(expected, s):
 
     for i in range(len(l1)):
         if l1[i] != l2[i]:
-            print("Line " + str(i + 1))
-            print("Expected: " + repr(l1[i]))
-            print("Was: " + repr(l2[i]))
+            print("\tLine " + str(i + 1))
+            print("\tExpected: " + repr(l1[i]))
+            print("\tWas: " + repr(l2[i]))
             break
 
 
 def run_test(package, test):
     # Start a timer for execution time.
     start = time.clock()
+
+    print(package + "/" + test)
 
     # Paths
     data_path = "tests/{0}/{1}/data.json".format(package, test)
@@ -35,19 +37,20 @@ def run_test(package, test):
         # Store the result for easier viewing for cases when a test fails.
         with open(result_path, "w") as result_file:
             result_file.write(result)
-            print("Result stored: " + result_path)
+            print("\tResult: " + result_path)
+
+        print("\tTime: " + str(time.clock() - start))
 
         # Validate the test.
         with open(expected_path) as expected_file:
             expected = expected_file.read()
-            print("")
             if result == expected:
-                print(package + "/" + test + ": Passed")
+                print("\tPassed")
             else:
-                print(package + "/" + test + ": Failed")
+                print("\tFailed")
                 compare(expected, result)
 
-    print("Time: " + str(time.clock() - start))
+        print("")
 
 
 if __name__ == "__main__":

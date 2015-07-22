@@ -20,10 +20,10 @@ def run_test(package, test):
     start = time.clock()
 
     # Paths
-    data_path = "data/{0}/{1}/data.json".format(package, test)
-    template_path = "data/{0}/{1}/template.html".format(package, test)
-    expected_path = "data/{0}/{1}/expected.html".format(package, test)
-    result_path = "data/{0}/{1}/result.html".format(package, test)
+    data_path = "tests/{0}/{1}/data.json".format(package, test)
+    template_path = "tests/{0}/{1}/template.html".format(package, test)
+    expected_path = "tests/{0}/{1}/expected.html".format(package, test)
+    result_path = "tests/{0}/{1}/result.html".format(package, test)
 
     with open(data_path) as data_file, open(template_path) as template_file:
         data = json.load(data_file)

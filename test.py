@@ -1,6 +1,6 @@
 import json
 import time
-from parser import parse
+from parser import parse, another, Section, Tag, again
 
 
 def compare(expected, s):
@@ -32,31 +32,50 @@ def run_test(package, test):
         template = template_file.read()
 
         # Initiate the parsen with the global as the most outer scope.
-        result, index = parse(data, template, 0)
+        # result, index = parse(data, template, 0)
+        s = Tag("html", 0, 0)
+        e = Tag("html", len(template), len(template))
+        section = None
+        section = Section(s, e)
+        # result = another(template, section)
+        result = again(template, section)
 
         # Store the result for easier viewing for cases when a test fails.
-        with open(result_path, "w") as result_file:
-            result_file.write(result)
-            print("\tResult: " + result_path)
+        # with open(result_path, "w") as result_file:
+        #     result_file.write(str(result))
+        #     print("\tResult: " + result_path)
 
-        print("\tTime: " + str(time.clock() - start))
+        print("")
+        print("")
+        # level = 0
+        # print("=== Level " + str(level) + " ===")
+        # print(result)
+        # level = 1
+        # print("=== Level " + str(level) + " ===")
+        # for ss in result.sections:
+        #     print(ss)
+        result.printSections(0)
+        print("")
+        print("")
+
+        # print("\tTime: " + str(time.clock() - start))
 
         # Validate the test.
-        with open(expected_path) as expected_file:
-            expected = expected_file.read()
-            if result == expected:
-                print("\tPassed")
-            else:
-                print("\tFailed")
-                compare(expected, result)
+        # with open(expected_path) as expected_file:
+        #     expected = expected_file.read()
+        #     if result == expected:
+        #         print("\tPassed")
+        #     else:
+        #         print("\tFailed")
+        #         compare(expected, result)
 
         print("")
 
 
 if __name__ == "__main__":
     packages = {
-        "global": ["single"],
-        "each": ["collection"]  # , "empty", "multiple", "nested", "this"]
+        # "global": ["single"],
+        "each": ["collection", "nested"]  # , "empty", "multiple", , "this"]
     }
 
     for package, tests in packages.items():

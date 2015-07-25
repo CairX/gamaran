@@ -10,6 +10,39 @@ class Tag:
         self.end = end
         self.key = key
 
+    def __str__(self):
+        s = "Tag: "
+        s += repr(self.tag)
+        s += " ("
+        s += str(self.start)
+        s += ", "
+        s += str(self.end)
+        s += ")"
+        return s
+
+
+class Section:
+    def __init__(self, start, end=None):
+        self.start = start
+        self.end = end
+        self.sections = []
+
+    def __str__(self):
+        s = "Section: "
+        s += " " + str(self.start)
+        s += " # " + str(self.end)
+        s += " # " + str(len(self.sections))
+        return s
+
+    def add(self, section):
+        self.sections.append(section)
+
+    def printSections(self, level):
+        tabs = "\t" * level
+        print(tabs + str(self))
+        for s in self.sections:
+            s.printSections(level+1)
+
 
 def log(string):
     if debug:
@@ -166,14 +199,18 @@ def parse(data, template, index):
     print("Start tag: " + str(start_tag))
     nested_tag = None
     if start_tag:
+        nested_tag = get_start_tag(template, start_tag.end)
+        print("Nested tag: " + str(nested_tag))
         # x = template.find(start_tag.tag, index)
         #print("Find: " + str(x))
-        print("Find: " + str(start_tag.start))
-        if index == start_tag.start:
-            nested_tag = get_start_tag(template, start_tag.end)
+        # print("Find: " + str(start_tag.start))
+        # if index == start_tag.start:
+        #     print("NESTED")
+        #     nested_tag = get_start_tag(template, start_tag.end)
+        #     print("Nested tag: " + str(nested_tag))
 
     if nested_tag:
-        print("Start tag: " + str(nested_tag.tag))
+        print("Nested tag: " + str(nested_tag.tag))
         # tag_start_index = nested
         # tag_end_index = template.find(start_end, tag_start_index) + len(start_end)
         # tag = template[tag_start_index:tag_end_index]
@@ -182,43 +219,141 @@ def parse(data, template, index):
         # print(repr(key))
         # template, index = parse(data[key], template, nested)
         # print(data)
-        template, index = parse(data[start_tag.key], template, nested_tag.start)
+
+        new = ""
+        for item in data[start_tag.key]:
+            template, index = parse(item, template, start_tag.end)
+            # new += template
         print(index)
         print(template)
-        start_tag = nested_tag
+        # start_tag = nested_tag
     elif start_tag:
         print("Else if")
         print(start_tag.tag)
-    else:
-        print("Else")
 
-    # has_end = template.find(each_tag_end, index)
-    # if has_end != -1:
-    #     new = ""
-    #     part = template[template.find(each_tag_start_end, index) + len(each_tag_start_end):has_end]
-    #     #print(part)
-    #     for item in data:
-    #         #print(item)
-    #         new += variables(item, part)
-    #
-    #     template = template.replace(template[index:has_end + len(end)], new, 1)
+        # has_end = template.find(each_tag_end, index)
+        # if has_end != -1:
+        #     new = ""
+        #     part = template[template.find(each_tag_start_end, index) + len(each_tag_start_end):has_end]
+        #     #print(part)
+        #     for item in data:
+        #         #print(item)
+        #         new += variables(item, part)
+        #
+        #     template = template.replace(template[index:has_end + len(end)], new, 1)
 
-    end_tag = get_end_tag(template, index)
-    if end_tag:
+        end_tag = get_end_tag(template, start_tag.end)
+        #if end_tag:
         print("End tag: " + str(end_tag.tag))
         new = ""
         part = template[start_tag.end:end_tag.start]
-        print(part)
-        for item in data:
-            # print(item)
+        # print(part)
+        # print(data)
+        for item in data[start_tag.key]:
+            print(item)
             new += variables(item, part)
 
         # template[index:has_end + len(end)]
-        template = template.replace(template[start.start:end_tag.end], new, 1)
+        template = template.replace(template[start_tag.start:end_tag.end], new, 1)
         index = end_tag.end
 
-
+    else:
+        print("Else")
 
     template = variables(data, template)
 
     return template, index
+
+
+def another(template, section):
+    index = section.start.end
+    print("+++")
+    print(section)
+
+    while index < len(template):
+        print("--- " + str(index))
+        start_tag = get_start_tag(template, index)
+        end_tag = get_end_tag(template, index)
+
+        if start_tag:
+            nested_tag = get_start_tag(template, start_tag.end)
+            # end_tag = get_end_tag(template, start_tag.end)
+        else:
+            nested_tag = None
+            # end_tag = get_end_tag(template, index)
+
+        print("Start tag: " + str(start_tag))
+        print("Nested tag: " + str(nested_tag))
+        print("End tag: " + str(end_tag))
+
+        if nested_tag and nested_tag.start < end_tag.start:
+            print("Nested")
+            new = Section(nested_tag)
+            new = another(template, new)
+            # print(new)
+            index = new.end.end
+            section.add(new)
+
+        if start_tag:
+            print("Start")
+            end_tag = end_tag = get_end_tag(template, index)
+            print("End tag: " + str(end_tag))
+            new = Section(start_tag, end_tag)
+            index = new.end.end
+            section.add(new)
+
+        elif end_tag:
+            # else:
+            print("End")
+            section.end = end_tag
+            # index = section.end.end
+            return section
+        else:
+            print("Else")
+            index = section.end.end
+
+    "Natural return"
+    return section
+
+
+def again(template, section):
+
+    print("")
+    print("+++")
+    print(section)
+    index = section.start.end
+
+    while index < len(template):
+        print("--- " + str(index))
+
+        end_tag = get_end_tag(template, index)
+        print("End tag: " + str(end_tag))
+
+        # We have a closing tag.
+        if end_tag:
+            start_tag = get_start_tag(template, index)
+            print("Start tag: " + str(start_tag))
+
+            # We have a start tag.
+            if start_tag:
+                # Is this end tag before the next start?
+                if end_tag.start < start_tag.end:
+                    # Then close this section.
+                    section.end = end_tag
+                    return section
+                else:
+                    # No, then this is nested. Time to go deeper.
+                    new = Section(start_tag)
+                    # Will add to the end
+                    new = again(template, new)
+                    index = new.end.end
+                    section.add(new)
+            # No other start tag.
+            else:
+                # Then close this section.
+                section.end = end_tag
+                return section
+        # Ńo closing tag.
+        else:
+            # Nothing to do then.
+            return section

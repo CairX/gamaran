@@ -40,11 +40,6 @@ def run_test(package, test):
         # result = another(template, section)
         result = again(template, section)
 
-        # Store the result for easier viewing for cases when a test fails.
-        # with open(result_path, "w") as result_file:
-        #     result_file.write(str(result))
-        #     print("\tResult: " + result_path)
-
         print("")
         print("")
         # level = 0
@@ -58,24 +53,33 @@ def run_test(package, test):
         print("")
         print("")
 
+        # print(result.data(template, data))
+
+        result = result.data(template, data)
+
+        # Store the result for easier viewing for cases when a test fails.
+        with open(result_path, "w") as result_file:
+            result_file.write(str(result))
+            print("\tResult: " + result_path)
+
         # print("\tTime: " + str(time.clock() - start))
 
         # Validate the test.
-        # with open(expected_path) as expected_file:
-        #     expected = expected_file.read()
-        #     if result == expected:
-        #         print("\tPassed")
-        #     else:
-        #         print("\tFailed")
-        #         compare(expected, result)
+        with open(expected_path) as expected_file:
+            expected = expected_file.read()
+            if result == expected:
+                print("\tPassed")
+            else:
+                print("\tFailed")
+                compare(expected, result)
 
         print("")
 
 
 if __name__ == "__main__":
     packages = {
-        # "global": ["single"],
-        "each": ["collection", "nested"]  # , "empty", "multiple", , "this"]
+        "global": ["single"],
+        "each": ["collection", "nested",  "multiple"]  # , "empty",, , "this"]
     }
 
     for package, tests in packages.items():

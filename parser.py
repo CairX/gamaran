@@ -29,10 +29,14 @@ class Section:
 
     def __str__(self):
         s = "Section: "
-        s += " " + str(self.start)
-        s += " # " + str(self.end)
+        s += " Start " + str(self.start)
+        s += " End " + str(self.end)
         s += " # " + str(len(self.sections))
         return s
+
+    def template(self, template):
+        self.part_inner = template[self.start.end:self.end.start]
+        self.part_outer = template[self.start.start:self.end.end]
 
     def add(self, section):
         self.sections.append(section)
@@ -42,6 +46,46 @@ class Section:
         print(tabs + str(self))
         for s in self.sections:
             s.printSections(level+1)
+
+    # def part(self, template):
+    def data(self, template, data):
+        if self.start.tag == "html":
+            # print("KEY: html")
+            d = data
+            tmp = template
+            for s in self.sections:
+                t = s.data(template, d)
+                tmp = tmp.replace(s.part_outer, t, 1)
+            tmp = variables(d, tmp)
+            return tmp
+        else:
+            # print("KEY: " + str(self.start.key))
+            d = data[self.start.key]
+
+            i_r = ""
+            for i in d:
+                # tmp = self.part_inner
+                # print("=== i ===")
+                # print(i)
+                s_r = self.part_inner
+                for s in self.sections:
+                    # print("=== s ===")
+                    # print(s)
+                    # print("--- === ---")
+                    t = s.data(template, i)
+                    # print(t)
+                    s_r = s_r.replace(s.part_outer, t, 1)
+                    # print(s_r)
+                    #print(self.part_inner.replace(s.part_outer, t, 1))
+                    # print("=== /s ===")
+                # print("=== /i ===")
+                # print("--- r ---")
+                # print(i)
+                # print("--- /r ---")
+                i_r += variables(i, s_r)
+
+            # print(i_r)
+            return i_r
 
 
 def log(string):
@@ -54,6 +98,9 @@ def clean(variable):
 
 
 def variables(data, template):
+    #print("=== VAR ===")
+    #print(data)
+    #print(template)
     tags = re.findall("{{[^#/].*?}}", template)
 
     for tag in tags:
@@ -340,6 +387,7 @@ def again(template, section):
                 if end_tag.start < start_tag.end:
                     # Then close this section.
                     section.end = end_tag
+                    section.template(template)
                     return section
                 else:
                     # No, then this is nested. Time to go deeper.
@@ -352,6 +400,7 @@ def again(template, section):
             else:
                 # Then close this section.
                 section.end = end_tag
+                section.template(template)
                 return section
         # Ńo closing tag.
         else:

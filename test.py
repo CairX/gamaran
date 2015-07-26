@@ -1,6 +1,6 @@
 import json
 import time
-from parser import parse, another, Section, Tag, again
+from parser import parse, Section, Tag
 
 
 def compare(expected, s):
@@ -37,32 +37,16 @@ def run_test(package, test):
         e = Tag("html", len(template), len(template))
         section = None
         section = Section(s, e)
-        # result = another(template, section)
-        result = again(template, section)
+        result = parse(template, section)
+        result = result.combine(template, data)
 
-        print("")
-        print("")
-        # level = 0
-        # print("=== Level " + str(level) + " ===")
-        # print(result)
-        # level = 1
-        # print("=== Level " + str(level) + " ===")
-        # for ss in result.sections:
-        #     print(ss)
-        result.printSections(0)
-        print("")
-        print("")
-
-        # print(result.data(template, data))
-
-        result = result.data(template, data)
+        # Display time it took to execute the test.
+        print("\tTime: " + str(time.clock() - start))
 
         # Store the result for easier viewing for cases when a test fails.
         with open(result_path, "w") as result_file:
             result_file.write(str(result))
             print("\tResult: " + result_path)
-
-        # print("\tTime: " + str(time.clock() - start))
 
         # Validate the test.
         with open(expected_path) as expected_file:
@@ -79,7 +63,7 @@ def run_test(package, test):
 if __name__ == "__main__":
     packages = {
         "global": ["single"],
-        "each": ["collection", "nested",  "multiple"]  # , "empty",, , "this"]
+        "each": ["collection", "nested",  "multiple", "this", "empty"]
     }
 
     for package, tests in packages.items():

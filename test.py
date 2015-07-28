@@ -63,7 +63,7 @@ def run_test(package, test):
 if __name__ == "__main__":
     packages = {
         "global": ["single"],
-        "each": ["collection", "nested",  "multiple", "this", "empty"]
+        "each": ["collection", "nested",  "multiple", "this", "empty", "else"]
     }
 
     for package, tests in packages.items():

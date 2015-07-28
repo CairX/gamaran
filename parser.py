@@ -23,6 +23,7 @@ class Section:
     def __init__(self, start, end=None):
         self.start = start
         self.end = end
+        self.else_tag = None
         self.sections = []
 
     def __str__(self):
@@ -42,7 +43,12 @@ class Section:
         self.sections.append(section)
 
     def parts(self, template):
-        self.part_inner = template[self.start.end:self.end.start]
+        if self.else_tag:
+            self.part_inner = template[self.start.end:self.else_tag.start]
+            self.part_else = template[self.else_tag.end:self.end.start]
+        else:
+            self.part_inner = template[self.start.end:self.end.start]
+
         self.part_outer = template[self.start.start:self.end.end]
 
     def combine(self, template, data):
@@ -65,13 +71,17 @@ class Section:
             result = ""
             items = data[self.start.key]
 
-            for item in items:
-                part = self.part_inner
-                for section in self.sections:
-                    combined = section.combine(template, item)
-                    part = part.replace(section.part_outer, combined, 1)
+            if len(items) > 0:
+                for item in items:
+                    part = self.part_inner
+                    for section in self.sections:
+                        combined = section.combine(template, item)
+                        part = part.replace(section.part_outer, combined, 1)
 
-                result += variables(item, part)
+                    result += variables(item, part)
+            else:
+                if self.else_tag:
+                    result = self.part_else
 
             return result
 
@@ -101,7 +111,8 @@ each_tag_end = "{{/each}}"
 
 def get_start_tag(template, index):
     tag_start = template.find(each_tag_start, index)
-    tag_end = template.find(each_tag_start_end, tag_start) + len(each_tag_start_end)
+    tag_end = template.find(each_tag_start_end, tag_start)
+    tag_end += len(each_tag_start_end)
 
     if tag_start == -1 or tag_end == -1:
         return None
@@ -126,6 +137,19 @@ def get_end_tag(template, index):
         return Tag(tag, tag_start, tag_end)
 
 
+def get_else_tag(template, start, end):
+    markup = "{{#else}}"
+    tag_start = template.find(markup, start, end)
+
+    if tag_start == -1:
+        return None
+    else:
+        tag_end = tag_start + len(markup)
+        tag = template[tag_start:tag_end]
+
+        return Tag(tag, tag_start, tag_end)
+
+
 def parse(template, section):
     index = section.start.end
 
@@ -142,11 +166,12 @@ def parse(template, section):
                 if end_tag.start < start_tag.end:
                     # Then close this section.
                     section.end = end_tag
+                    section.else_tag = get_else_tag(template, start_tag.end, end_tag.start)
                     # When end has been added calculate parts from template.
                     section.parts(template)
                     return section
+                # No, then this is nested. Time to go deeper.
                 else:
-                    # No, then this is nested. Time to go deeper.
                     new = Section(start_tag)
                     # Will add to the end
                     new = parse(template, new)
@@ -156,6 +181,7 @@ def parse(template, section):
             else:
                 # Then close this section.
                 section.end = end_tag
+                section.else_tag = get_else_tag(template, section.start.end, end_tag.start)
                 # When end has been added calculate parts from template.
                 section.parts(template)
                 return section

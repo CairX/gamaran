@@ -2,19 +2,26 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Manga</title>
+		<title>Colors</title>
+		<style>
+			.example {
+				display: inline-block;
+				height: 1em;
+				width: 1em;
+				vertical-align: middle;
+			}
+		</style>
 	</head>
 	<body>
-		<h1>Manga</h1>
-		{{#each manga}}
-		<h2>{{title}}</h2>
-		<p>{{description}}</p>
-		<p>
-			<strong>Authors:</strong>
-			{{#each authors}}
-			{{this}},
-			{{/each}}
-		</p>
+		<h1>Colors</h1>
+		<p>Supported HTML color names.</p>
+		<ul>
+		{{#each colors}}
+			<li>
+				<span class="example" style="background: {{this}};"></span>
+				{{this}}
+			</li>
 		{{/each}}
+		</ul>
 	</body>
 </html>

@@ -2,13 +2,27 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Mangas</title>
+		<title>Books</title>
 	</head>
 	<body>
-		<h1>Mangas</h1>
-		{{#each mangas}}
+		<h1>Books</h1>
+		{{#each books}}
 		<h2>{{title}}</h2>
 		<p>{{description}}</p>
+		<h3>Details</h3>
+		<dl>
+			<dt>Author</dt>
+			<dd>{{author}}</dd>
+
+			<dt>Published</dt>
+			<dd>{{published}}</dd>
+
+			<dt>Publisher</dt>
+			<dd>{{publisher}}</dd>
+
+			<dt>ISBN</dt>
+			<dd>{{isbn}}</dd>
+		</dl>
 		{{/each}}
 	</body>
 </html>

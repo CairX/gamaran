@@ -138,7 +138,7 @@ def get_end_tag(template, index):
 
 
 def get_else_tag(template, start, end):
-    markup = "{{#else}}"
+    markup = "{{else}}"
     tag_start = template.find(markup, start, end)
 
     if tag_start == -1:

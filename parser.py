@@ -99,7 +99,7 @@ def variables(data, template):
             d = data
         else:
             d = data[variable]
-        template = template.replace(tag, d, 1)
+        template = template.replace(tag, str(d), 1)
 
     return template
 

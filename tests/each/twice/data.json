@@ -1,0 +1,37 @@
+{
+	"animes": [
+		{
+			"id": 1,
+			"title": "Death Note",
+			"description": "During just another normal day, Yagami Light stumbles upon a black notebook known as the Death Note. This notebook belongs to a shinigami, Ryuk, having the ability to kill anyone who has their name written in it. As the new owner of the Death Note, Light's true desires surface, yearning to cleanse the world of evil by murdering a large number of criminals. When the world begins to notice the existence of this unknown killer, legendary detective L is brought onto the case; starting a war between Kira and L. Whoever is able to find out the others identity first will be the one to survive. Based on the manga by Tsugumi Ohba and Takeshi Obata.",
+			"episodes": "37",
+			"genre": [
+				"Mystery",
+				"Drama",
+				"Horror",
+				"Shounen",
+				"Supernatural",
+				"Police",
+				"Psychological"]
+		}, {
+			"id": 2,
+			"title": "Fullmetal Alchemist",
+			"description": "The rules of alchemy state that to gain something, one must lose something of equal value. Alchemy is the process of taking apart and reconstructing an object into a different entity, with the rules of alchemy to govern this procedure. However, there exists an object that can bring any alchemist above these rules, the object known as the Philosopher's Stone. The young Edward Elric is a particularly talented alchemist who through an accident years back lost his younger brother Alphonse and one of his legs. Sacrificing one of his arms as well, he used alchemy to bind his brother's soul to a suit of armor. This lead to the beginning of their journey to restore their bodies, in search for the legendary Philosopher's Stone.",
+			"episodes": "51",
+			"genre": ["Action",
+				"Adventure",
+				"Comedy",
+				"Drama",
+				"Fantasy",
+				"Magic",
+				"Shounen",
+				"Military"]
+		}, {
+			"id": 3,
+			"title": "One Piece",
+			"description": "22 years ago, the legendary pirate Gol D. Roger, departed the world leaving behind the treasure One Piece for any who are worthy enough to find it. He who finds this treasure would be granted the title Pirate King. Amazed by this news, the young Monkey D. Luffy sets out on a journey to find a group of pirate comrades, towards his goal of attaining One Piece and becoming the Pirate King. Based on the manga by Oda Eiichiro.",
+			"episodes": "Ongoing",
+			"genre": ["Action", "Adventure", "Comedy", "Shounen"]
+		}
+	]
+}

@@ -1,11 +1,13 @@
 # TODO
 
-* each: else section
-* with: implement basics
-* if: implement basics
-* unless: implement basics
-* comment: implement basics
-* app: create a main that take file paths and compiles to a result
-* documentation: maybe time for some?
-* variables: handle downward paths through dot
-* haskell: time to learn how to do this
+* ~~each-block: else section~~
+* with-block
+* with-block: else section
+* if-block
+* unless-block
+* comment-block
+* Error handling for non existing data (KeyError).
+* Create a main that take file paths and compiles to a result.
+* Documentation: Time for some?
+* Variables: handle downward paths through dot.
+* Haskell: Time to learn how to do this?

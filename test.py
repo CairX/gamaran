@@ -1,7 +1,8 @@
 import json
 import time
 from collections import OrderedDict
-from parser import parse, Section, Tag
+from parser import parse
+from tags import Tag, WithBlock
 
 
 def compare(expected, s):
@@ -34,11 +35,12 @@ def run_test(package, test):
 
         # Initiate the parsen with the global as the most outer scope.
         # result, index = parse(data, template, 0)
-        s = Tag("html", 0, 0)
-        e = Tag("html", len(template), len(template))
-        section = None
-        section = Section(s, e)
-        result = parse(template, section)
+        start_tag = Tag("html", "html", 0, 0)
+        end_tag = Tag("html", "html", len(template), len(template))
+        block = None
+        block = WithBlock(start_tag)
+        block.end_tag = end_tag
+        result = parse(template, block)
         result = result.combine(template, data)
 
         # Display time it took to execute the test.

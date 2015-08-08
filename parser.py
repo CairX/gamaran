@@ -1,140 +1,48 @@
 import re
+from tags import Tag, EachBlock, WithBlock
 
 
-class Tag:
-    def __init__(self, tag, start, end, key=None):
-        self.tag = tag
-        self.start = start
-        self.end = end
-        self.key = key
-
-    def __str__(self):
-        s = "Tag: "
-        s += repr(self.tag)
-        s += " ("
-        s += str(self.start)
-        s += ", "
-        s += str(self.end)
-        s += ")"
-        return s
-
-
-class Section:
-    def __init__(self, start, end=None):
-        self.start = start
-        self.end = end
-        self.else_tag = None
-        self.sections = []
-
-    def __str__(self):
-        s = "Section: "
-        s += " Start " + str(self.start)
-        s += " End " + str(self.end)
-        s += " # " + str(len(self.sections))
-        return s
-
-    def pretty_print(self, level):
-        tabs = "\t" * level
-        print(tabs + str(self))
-        for s in self.sections:
-            s.printSections(level+1)
-
-    def add(self, section):
-        self.sections.append(section)
-
-    def parts(self, template):
-        if self.else_tag:
-            self.part_inner = template[self.start.end:self.else_tag.start]
-            self.part_else = template[self.else_tag.end:self.end.start]
-        else:
-            self.part_inner = template[self.start.end:self.end.start]
-
-        self.part_outer = template[self.start.start:self.end.end]
-
-    def combine(self, template, data):
-        # The most outer Section is faked as html instead of a proper
-        # "each" tag. Which means it has no real loop but instead really is a
-        # flat strucutre that requires special treatment. In the future
-        # this should be changed to a more generic solution probably through
-        # the "with" functionality.
-        if self.start.tag == "html":
-            result = template
-
-            for section in self.sections:
-                combined = section.combine(template, data)
-                result = result.replace(section.part_outer, combined, 1)
-
-            return variables(data, result)
-
-        # This is the proper "each" tag logic.
-        else:
-            result = ""
-            items = data[self.start.key]
-
-            if len(items) > 0:
-                for item in items:
-                    part = self.part_inner
-                    for section in self.sections:
-                        combined = section.combine(template, item)
-                        part = part.replace(section.part_outer, combined, 1)
-
-                    result += variables(item, part)
-            else:
-                if self.else_tag:
-                    result = self.part_else
-
-            return result
-
-
-def clean(variable):
-    return variable[2:-2]
-
-
-def variables(data, template):
-    tags = re.findall("{{[^#/].*?}}", template)
-
-    for tag in tags:
-        variable = clean(tag)
-        if variable == "this":
-            d = data
-        else:
-            d = data[variable]
-        template = template.replace(tag, str(d), 1)
-
-    return template
-
-
-each_tag_start = "{{#each "
-each_tag_start_end = "}}"
-each_tag_end = "{{/each}}"
-
-
-def get_start_tag(template, index):
-    tag_start = template.find(each_tag_start, index)
-    tag_end = template.find(each_tag_start_end, tag_start)
-    tag_end += len(each_tag_start_end)
-
-    if tag_start == -1 or tag_end == -1:
-        return None
+def new_block(start_tag):
+    if start_tag.name == "each":
+        return EachBlock(start_tag)
+    elif start_tag.name == "with":
+        return WithBlock(start_tag)
     else:
-        tag = template[tag_start:tag_end]
-        key_start = tag_start + len(each_tag_start)
-        key_end = tag_end - len(each_tag_start_end)
-        key = template[key_start:key_end]
+        return None
 
-        return Tag(tag, tag_start, tag_end, key)
+
+def get_start_tag(end_tag, template, index):
+    pattern = "{{#(" + end_tag.name + ") (.*?)}}"
+    search = re.search(pattern, template[index:])
+
+    if search:
+        markup = search.group(0)
+        name = search.group(1)
+        key = search.group(2)
+
+        span = search.span(0)
+        start = index + span[0]
+        end = index + span[1]
+
+        return Tag(markup, name, start, end, key)
+    else:
+        return None
 
 
 def get_end_tag(template, index):
-    tag_start = template.find(each_tag_end, index)
+    search = re.search("{{/(each|with)}}", template[index:])
 
-    if tag_start == -1:
-        return None
+    if search:
+        markup = search.group(0)
+        name = search.group(1)
+
+        span = search.span(0)
+        start = index + span[0]
+        end = index + span[1]
+
+        return Tag(markup, name, start, end)
     else:
-        tag_end = tag_start + len(each_tag_end)
-        tag = template[tag_start:tag_end]
-
-        return Tag(tag, tag_start, tag_end)
+        return None
 
 
 def get_else_tag(template, start, end):
@@ -147,41 +55,41 @@ def get_else_tag(template, start, end):
         tag_end = tag_start + len(markup)
         tag = template[tag_start:tag_end]
 
-        return Tag(tag, tag_start, tag_end)
+        return Tag(tag, "else", tag_start, tag_end)
 
 
 def parse(template, section):
-    index = section.start.end
+    index = section.start_tag.end
 
     while index < len(template):
         end_tag = get_end_tag(template, index)
 
         # We have a closing tag.
         if end_tag:
-            start_tag = get_start_tag(template, index)
+            start_tag = get_start_tag(end_tag, template, index)
 
             # We have a start tag.
             if start_tag:
                 # Is this end tag before the next start?
                 if end_tag.start < start_tag.end:
                     # Then close this section.
-                    section.end = end_tag
+                    section.end_tag = end_tag
                     section.else_tag = get_else_tag(template, start_tag.end, end_tag.start)
                     # When end has been added calculate parts from template.
                     section.parts(template)
                     return section
                 # No, then this is nested. Time to go deeper.
                 else:
-                    new = Section(start_tag)
+                    new = new_block(start_tag)
                     # Will add to the end
                     new = parse(template, new)
-                    index = new.end.end
-                    section.add(new)
+                    index = new.end_tag.end
+                    section.append_child(new)
             # No other start tag.
             else:
                 # Then close this section.
-                section.end = end_tag
-                section.else_tag = get_else_tag(template, section.start.end, end_tag.start)
+                section.end_tag = end_tag
+                section.else_tag = get_else_tag(template, section.start_tag.end, end_tag.start)
                 # When end has been added calculate parts from template.
                 section.parts(template)
                 return section

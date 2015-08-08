@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Book</title>
+	</head>
+	<body>
+		<h1>Book</h1>
+		{{#with book}}
+		<h2>{{title}}</h2>
+		<p>{{description}}</p>
+		<h3>Details</h3>
+		<dl>
+			<dt>Author</dt>
+			<dd>{{author}}</dd>
+
+			<dt>Published</dt>
+			<dd>{{published}}</dd>
+
+			<dt>Publisher</dt>
+			<dd>{{publisher}}</dd>
+
+			<dt>ISBN</dt>
+			<dd>{{isbn}}</dd>
+		</dl>
+		{{/with}}
+	</body>
+</html>

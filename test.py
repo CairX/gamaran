@@ -1,5 +1,6 @@
 import json
 import time
+from collections import OrderedDict
 from parser import parse, Section, Tag
 
 
@@ -61,18 +62,18 @@ def run_test(package, test):
 
 
 if __name__ == "__main__":
-    packages = {
-        "global": ["single"],
-        "each": [
-            "empty",
-            "collection",
-            "this",
-            "multiple",
-            "twice",
-            "nested",
-            "else"
-        ]
-    }
+    packages = OrderedDict()
+    packages["global"] = ["single"]
+    packages["each"] = [
+        "empty",
+        "collection",
+        "this",
+        "multiple",
+        "twice",
+        "nested",
+        "else"
+    ]
+    packages["with"] = ["single"]
 
     for package, tests in packages.items():
         for test in tests:

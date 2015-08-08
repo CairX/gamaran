@@ -7,6 +7,7 @@
 * unless-block
 * comment-block
 * Error handling for non existing data (KeyError).
+* Error handling for improper nestling.
 * Create a main that take file paths and compiles to a result.
 * Documentation: Time for some?
 * Variables: handle downward paths through dot.

@@ -5,7 +5,7 @@
 * with-block: else section
 * if-block
 * unless-block
-* comment-block
+* ~~comment-blocks~~
 * Error handling for non existing data (KeyError).
 * Error handling for improper nestling.
 * Create a main that take file paths and compiles to a result.

@@ -1,17 +1,31 @@
 import re
 
 
-def clean(variable):
-    return variable[2:-2]
+def remove_dashed_comments(template):
+    comments = re.findall("{{!--.*?--}}", template)
+
+    for comment in comments:
+        template = template.replace(comment, "", 1)
+
+    return template
+
+
+def remove_simple_comments(template):
+    comments = re.findall("{{!.*?}}", template)
+
+    for comment in comments:
+        template = template.replace(comment, "", 1)
+
+    return template
 
 
 # TODO: Remove this from here if possible
 # or integrate better with the result of the logic here.
-def variables(data, template):
-    tags = re.findall("{{[^#/].*?}}", template)
+def parse_variables(template, data):
+    tags = re.findall("{{[^#/!].*?}}", template)
 
     for tag in tags:
-        variable = clean(tag)
+        variable = tag[2:-2]
         if variable == "this":
             d = data
         else:
@@ -19,6 +33,14 @@ def variables(data, template):
         template = template.replace(tag, str(d), 1)
 
     return template
+
+
+# TODO: The comments could probably be done at the highest level before
+# anything else is done. Probably way better for performance.
+def parse_inner(template, data):
+    template = remove_dashed_comments(template)
+    template = remove_simple_comments(template)
+    return parse_variables(template, data)
 
 
 class Tag:
@@ -90,7 +112,7 @@ class EachBlock(Block):
                     combined = child.combine(template, item)
                     part = part.replace(child.part_outer, combined, 1)
 
-                result += variables(item, part)
+                result += parse_inner(part, item)
         else:
             if self.else_tag:
                 result = self.part_else
@@ -113,7 +135,7 @@ class WithBlock(Block):
                 combined = child.combine(template, data)
                 result = result.replace(child.part_outer, combined, 1)
 
-            return variables(data, result)
+            return parse_inner(result, data)
         else:
             result = ""
             item = data[self.start_tag.key]
@@ -128,9 +150,9 @@ class WithBlock(Block):
                     combined = child.combine(template, item)
                     part = part.replace(child.part_outer, combined, 1)
 
-                result = variables(item, part)
+                result = parse_inner(part, item)
             else:
                 if self.else_tag:
                     result = self.part_else
 
-            return variables(data, result)
+            return result

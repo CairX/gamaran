@@ -34,7 +34,6 @@ def run_test(package, test):
         template = template_file.read()
 
         # Initiate the parsen with the global as the most outer scope.
-        # result, index = parse(data, template, 0)
         start_tag = Tag("html", "html", 0, 0)
         end_tag = Tag("html", "html", len(template), len(template))
         block = None
@@ -46,7 +45,7 @@ def run_test(package, test):
         # Display time it took to execute the test.
         print("\tTime: " + str(time.clock() - start))
 
-        # Store the result for easier viewing for cases when a test fails.
+        # Store the result for easier viewing when a test fails.
         with open(result_path, "w") as result_file:
             result_file.write(str(result))
             print("\tResult: " + result_path)
@@ -76,6 +75,7 @@ if __name__ == "__main__":
         "else"
     ]
     packages["with"] = ["single"]
+    packages["comments"] = ["simple", "dashed"]
 
     for package, tests in packages.items():
         for test in tests:

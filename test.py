@@ -32,15 +32,7 @@ def run_test(package, test):
     with open(data_path) as data_file, open(template_path) as template_file:
         data = json.load(data_file)
         template = template_file.read()
-
-        # Initiate the parsen with the global as the most outer scope.
-        start_tag = Tag("html", "html", 0, 0)
-        end_tag = Tag("html", "html", len(template), len(template))
-        block = None
-        block = WithBlock(start_tag)
-        block.end_tag = end_tag
-        result = parse(template, block)
-        result = result.combine(template, data)
+        result = parse(template, data)
 
         # Display time it took to execute the test.
         print("\tTime: " + str(time.clock() - start))

@@ -1,26 +1,6 @@
 import re
 
 
-def remove_dashed_comments(template):
-    comments = re.findall("{{!--.*?--}}", template)
-
-    for comment in comments:
-        template = template.replace(comment, "", 1)
-
-    return template
-
-
-def remove_simple_comments(template):
-    comments = re.findall("{{!.*?}}", template)
-
-    for comment in comments:
-        template = template.replace(comment, "", 1)
-
-    return template
-
-
-# TODO: Remove this from here if possible
-# or integrate better with the result of the logic here.
 def parse_variables(template, data):
     tags = re.findall("{{[^#/!].*?}}", template)
 
@@ -33,14 +13,6 @@ def parse_variables(template, data):
         template = template.replace(tag, str(d), 1)
 
     return template
-
-
-# TODO: The comments could probably be done at the highest level before
-# anything else is done. Probably way better for performance.
-def parse_inner(template, data):
-    template = remove_dashed_comments(template)
-    template = remove_simple_comments(template)
-    return parse_variables(template, data)
 
 
 class Tag:
@@ -112,7 +84,7 @@ class EachBlock(Block):
                     combined = child.combine(template, item)
                     part = part.replace(child.part_outer, combined, 1)
 
-                result += parse_inner(part, item)
+                result += parse_variables(part, item)
         else:
             if self.else_tag:
                 result = self.part_else
@@ -135,7 +107,7 @@ class WithBlock(Block):
                 combined = child.combine(template, data)
                 result = result.replace(child.part_outer, combined, 1)
 
-            return parse_inner(result, data)
+            return parse_variables(result, data)
         else:
             result = ""
             item = data[self.start_tag.key]
@@ -150,7 +122,7 @@ class WithBlock(Block):
                     combined = child.combine(template, item)
                     part = part.replace(child.part_outer, combined, 1)
 
-                result = parse_inner(part, item)
+                result = parse_variables(part, item)
             else:
                 if self.else_tag:
                     result = self.part_else

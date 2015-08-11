@@ -19,8 +19,13 @@ def parse(template, data):
 
 
 def remove_dashed_comments(template):
-    comments = re.findall("{{!--.*?--}}", template, re.DOTALL)
+    pattern = "{{!--.*?--}}"
 
+    comments = re.findall("[\n][ \t]*" + pattern, template, re.DOTALL)
+    for comment in comments:
+        template = template.replace(comment, "", 1)
+
+    comments = re.findall(pattern, template, re.DOTALL)
     for comment in comments:
         template = template.replace(comment, "", 1)
 
@@ -28,8 +33,13 @@ def remove_dashed_comments(template):
 
 
 def remove_simple_comments(template):
-    comments = re.findall("{{!.*?}}", template, re.DOTALL)
+    pattern = "{{!.*?}}"
 
+    comments = re.findall("[\n][ \t]*" + pattern, template, re.DOTALL)
+    for comment in comments:
+        template = template.replace(comment, "", 1)
+
+    comments = re.findall(pattern, template, re.DOTALL)
     for comment in comments:
         template = template.replace(comment, "", 1)
 

@@ -73,7 +73,25 @@ if __name__ == "__main__":
         "else"
     ]
     packages["with"] = ["single"]
-    packages["comments"] = ["simple", "dashed"]
+    packages["comments-dashed"] = [
+        "begin-newline",
+        "begin-spaces",
+        "begin-tabs",
+        "endline",
+        "inline",
+        "multiline",
+        "preserve-newline",
+        "special-tokens"
+    ]
+    packages["comments-simple"] = [
+        "begin-newline",
+        "begin-spaces",
+        "begin-tabs",
+        "endline",
+        "inline",
+        "multiline",
+        "preserve-newline"
+    ]
 
     for package, tests in packages.items():
         for test in tests:

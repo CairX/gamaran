@@ -1,6 +1,5 @@
 import json
 import os
-import time
 from collections import OrderedDict
 from parser import parse
 
@@ -8,20 +7,22 @@ from parser import parse
 def compare(expected, s):
     l1 = expected.splitlines()
     l2 = s.splitlines()
+    result = ""
 
     for i in range(len(l1)):
         if l1[i] != l2[i]:
-            print("\tLine " + str(i + 1))
-            print("\tExpected: " + repr(l1[i]))
-            print("\tWas: " + repr(l2[i]))
+            result += "\tLine:     " + str(i + 1) + "\n"
+            result += "\tExpected: " + repr(l1[i]) + "\n"
+            result += "\tWas:      " + repr(l2[i]) + "\n"
             break
+
+    return result
 
 
 def run_test(package, test):
-    # Start a timer for execution time.
-    start = time.clock()
-
-    print(package + "/" + test)
+    # Create a message through the test for printing later.
+    message = package + "/" + test + "\n"
+    passed = False
 
     # Paths
     data_path = "tests/{0}/{1}/data.json".format(package, test)
@@ -40,24 +41,20 @@ def run_test(package, test):
 
         result = parse(template, data)
 
-        # Display time it took to execute the test.
-        print("\tTime: " + str(time.clock() - start))
-
         # Store the result for easier viewing when a test fails.
         with open(result_path, "w") as result_file:
             result_file.write(str(result))
-            print("\tResult: " + result_path)
 
         # Validate the test.
         with open(expected_path) as expected_file:
             expected = expected_file.read()
             if result == expected:
-                print("\tPassed")
+                passed = True
             else:
-                print("\tFailed")
-                compare(expected, result)
+                passed = False
+                message += compare(expected, result)
 
-        print("")
+        return passed, message
 
 
 if __name__ == "__main__":
@@ -93,6 +90,13 @@ if __name__ == "__main__":
         "preserve-newline"
     ]
 
+    all_passed = True
     for package, tests in packages.items():
         for test in tests:
-            run_test(package, test)
+            passed, message = run_test(package, test)
+            if not passed:
+                print(message)
+                all_passed = False
+
+    if all_passed:
+        print("All tests passed.")

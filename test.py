@@ -1,8 +1,8 @@
 import json
+import os
 import time
 from collections import OrderedDict
 from parser import parse
-from tags import Tag, WithBlock
 
 
 def compare(expected, s):
@@ -29,9 +29,15 @@ def run_test(package, test):
     expected_path = "tests/{0}/{1}/expected.html".format(package, test)
     result_path = "tests/{0}/{1}/result.html".format(package, test)
 
-    with open(data_path) as data_file, open(template_path) as template_file:
-        data = json.load(data_file)
+    with open(template_path) as template_file:
         template = template_file.read()
+
+        if os.path.isfile(data_path):
+            with open(data_path) as data_file:
+                data = json.load(data_file)
+        else:
+            data = []
+
         result = parse(template, data)
 
         # Display time it took to execute the test.

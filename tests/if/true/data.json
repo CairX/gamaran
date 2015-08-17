@@ -1,0 +1,9 @@
+{
+	"trueboolean": true,
+	"string": "string",
+	"number": 1,
+	"list": ["one", "two"],
+	"object": {
+		"attribute": "value"
+	}
+}

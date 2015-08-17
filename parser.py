@@ -1,5 +1,5 @@
 import re
-from tags import Tag, EachBlock, WithBlock
+from tags import Tag, EachBlock, IfBlock, WithBlock
 
 
 def parse(template, data):
@@ -90,6 +90,8 @@ def parse_blocks(template, block):
 def new_block(start_tag):
     if start_tag.name == "each":
         return EachBlock(start_tag)
+    elif start_tag.name == "if":
+        return IfBlock(start_tag)
     elif start_tag.name == "with":
         return WithBlock(start_tag)
     else:
@@ -115,7 +117,7 @@ def get_start_tag(end_tag, template, index):
 
 
 def get_end_tag(template, index):
-    search = re.search("{{/(each|with)}}", template[index:])
+    search = re.search("{{/(each|with|if)}}", template[index:])
 
     if search:
         markup = search.group(0)

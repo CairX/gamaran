@@ -89,6 +89,7 @@ if __name__ == "__main__":
         "multiline",
         "preserve-newline"
     ]
+    packages["if"] = ["true", "false", "else"]
 
     all_passed = True
     for package, tests in packages.items():

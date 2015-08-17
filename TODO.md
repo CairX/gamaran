@@ -4,8 +4,8 @@
 * ~~**Else** support within **each**.~~
 * ~~Basic **with**.~~
 * ~~**Else** support within **with**.~~
-* Basic **if**.
-* **Else** support within **if**.
+* ~~Basic **if**.~~
+* ~~**Else** support within **if**.~~
 * Basic **unless**.
 * **Else** support within **unless**.
 * ~~**Comment** blocks.~~

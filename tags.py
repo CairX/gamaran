@@ -2,7 +2,7 @@ import re
 
 
 def parse_variables(template, data):
-    tags = re.findall("{{[^#/!].*?}}", template)
+    tags = re.findall("{{[^#/!@].*?}}", template)
 
     for tag in tags:
         variable = tag[2:-2]
@@ -82,12 +82,13 @@ class EachBlock(Block):
             items = None
 
         if items and len(items) > 0:
-            for item in items:
+            for index, item in enumerate(items, start=1):
                 part = self.part_inner
                 for child in self.children:
                     combined = child.combine(template, item)
                     part = part.replace(child.part_outer, combined, 1)
 
+                part = part.replace("{{@index}}", str(index))
                 result += parse_variables(part, item)
         else:
             if self.else_tag:

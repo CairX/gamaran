@@ -68,7 +68,8 @@ if __name__ == "__main__":
         "twice",
         "nested",
         "else",
-        "none"
+        "none",
+        "index"
     ]
     packages["with"] = ["single", "none"]
     packages["comments-dashed"] = [

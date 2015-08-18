@@ -9,7 +9,7 @@
 * ~~Basic **unless**.~~
 * ~~**Else** support within **unless**.~~
 * ~~**Comment** blocks.~~
-* **Each** support variable for *index*.
+* ~~**Each** support variable for *index*.~~
 * **Each** support variable for *key*.
 * **Varibles** support for escaped and none escaped content.
 * ~~Error handling for non existing data (KeyError).~~

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Book</title>
+	</head>
+	<body>
+		<h1>Book</h1>
+		<dl>
+		{{#each book}}
+			<dt>{{@key}}:</dt>
+			<dd>{{this}}</dd>
+		{{/each}}
+		</dl>
+	</body>
+</html>

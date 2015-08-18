@@ -35,7 +35,7 @@ def run_test(package, test):
 
         if os.path.isfile(data_path):
             with open(data_path) as data_file:
-                data = json.load(data_file)
+                data = json.load(data_file, object_pairs_hook=OrderedDict)
         else:
             data = []
 
@@ -69,7 +69,8 @@ if __name__ == "__main__":
         "nested",
         "else",
         "none",
-        "index"
+        "index",
+        "object"
     ]
     packages["with"] = ["single", "none"]
     packages["comments-dashed"] = [

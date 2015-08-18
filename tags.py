@@ -1,20 +1,6 @@
 import re
 
 
-def parse_variables(template, data):
-    tags = re.findall("{{[^#/!@].*?}}", template)
-
-    for tag in tags:
-        variable = tag[2:-2]
-        if variable == "this":
-            d = data
-        else:
-            d = data[variable]
-        template = template.replace(tag, str(d), 1)
-
-    return template
-
-
 class Tag:
     def __init__(self, markup, name, start, end, key=None):
         self.markup = markup
@@ -70,26 +56,50 @@ class Block:
 
         self.part_outer = template[self.start_tag.start:self.end_tag.end]
 
+    def parse_variables(self, template, data):
+        tags = re.findall("{{[^#/!@].*?}}", template)
+
+        for tag in tags:
+            variable = tag[2:-2]
+            if variable == "this":
+                d = data
+            else:
+                d = data[variable]
+            template = template.replace(tag, str(d), 1)
+
+        return template
+
 
 class EachBlock(Block):
 
+    def parse_item(self, template, data, index, key):
+        part = self.part_inner
+        for child in self.children:
+            combined = child.combine(template, data)
+            part = part.replace(child.part_outer, combined, 1)
+
+        part = part.replace("{{@index}}", str(index))
+        part = part.replace("{{@key}}", str(key))
+        return self.parse_variables(part, data)
+
     def combine(self, template, data):
         result = ""
+        key = self.start_tag.key
 
         try:
-            items = data[self.start_tag.key]
+            items = data[key]
         except KeyError:
             items = None
 
         if items and len(items) > 0:
-            for index, item in enumerate(items, start=1):
-                part = self.part_inner
-                for child in self.children:
-                    combined = child.combine(template, item)
-                    part = part.replace(child.part_outer, combined, 1)
-
-                part = part.replace("{{@index}}", str(index))
-                result += parse_variables(part, item)
+            dictionaries = ["dict", "OrderedDict"]
+            if items.__class__.__name__ in dictionaries:
+                for index, key in enumerate(items, start=1):
+                    item = items[key]
+                    result += self.parse_item(template, item, index, key)
+            else:
+                for index, item in enumerate(items, start=1):
+                    result += self.parse_item(template, item, index, key)
         else:
             if self.else_tag:
                 result = self.part_else
@@ -112,7 +122,7 @@ class WithBlock(Block):
                 combined = child.combine(template, data)
                 result = result.replace(child.part_outer, combined, 1)
 
-            return parse_variables(result, data)
+            return self.parse_variables(result, data)
         else:
             result = ""
 
@@ -131,7 +141,7 @@ class WithBlock(Block):
                     combined = child.combine(template, item)
                     part = part.replace(child.part_outer, combined, 1)
 
-                result = parse_variables(part, item)
+                result = self.parse_variables(part, item)
             else:
                 if self.else_tag:
                     result = self.part_else
@@ -154,7 +164,7 @@ class IfBlock(Block):
                 combined = child.combine(template, item)
                 part = part.replace(child.part_outer, combined, 1)
 
-            result += parse_variables(part, data)
+            result += self.parse_variables(part, data)
         else:
             if self.else_tag:
                 result = self.part_else
@@ -177,7 +187,7 @@ class UnlessBlock(Block):
                 combined = child.combine(template, item)
                 part = part.replace(child.part_outer, combined, 1)
 
-            result += parse_variables(part, data)
+            result += self.parse_variables(part, data)
         else:
             if self.else_tag:
                 result = self.part_else

@@ -1,9 +1,0 @@
-{
-	"valueboolean": true,
-	"valuestring": "string",
-	"valuenumber": 1,
-	"valuelist": ["one", "two"],
-	"valueobject": {
-		"attribute": "value"
-	}
-}

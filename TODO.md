@@ -6,8 +6,8 @@
 * ~~**Else** support within **with**.~~
 * ~~Basic **if**.~~
 * ~~**Else** support within **if**.~~
-* Basic **unless**.
-* **Else** support within **unless**.
+* ~~Basic **unless**.~~
+* ~~**Else** support within **unless**.~~
 * ~~**Comment** blocks.~~
 * **Each** support variable for *index*.
 * **Each** support variable for *key*.

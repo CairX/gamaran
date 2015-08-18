@@ -90,6 +90,7 @@ if __name__ == "__main__":
         "preserve-newline"
     ]
     packages["if"] = ["true", "false", "else"]
+    packages["unless"] = ["true", "false", "else"]
 
     all_passed = True
     for package, tests in packages.items():

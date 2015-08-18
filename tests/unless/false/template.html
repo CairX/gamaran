@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>False</title>
+	</head>
+	<body>
+		<h1>False</h1>
+		{{#unless trueboolean}}
+		<p>Boolean with value true.</p>
+		{{/unless}}
+
+		{{#unless string}}
+		<p>Defined string, not empty.</p>
+		{{/unless}}
+
+		{{#unless number}}
+		<p>A number besides 0.</p>
+		{{/unless}}
+
+		{{#unless list}}
+		<p>Non empty list.</p>
+		{{/unless}}
+
+		{{#unless object}}
+		<p>Defined object.</p>
+		{{/unless}}
+	</body>
+</html>

@@ -151,3 +151,26 @@ class IfBlock(Block):
                 result = self.part_else
 
         return result
+
+
+class UnlessBlock(Block):
+
+    def combine(self, template, data):
+        result = ""
+        try:
+            item = data[self.start_tag.key]
+        except KeyError:
+            item = None
+
+        if not item:
+            part = self.part_inner
+            for child in self.children:
+                combined = child.combine(template, item)
+                part = part.replace(child.part_outer, combined, 1)
+
+            result += parse_variables(part, data)
+        else:
+            if self.else_tag:
+                result = self.part_else
+
+        return result

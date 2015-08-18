@@ -75,9 +75,13 @@ class EachBlock(Block):
 
     def combine(self, template, data):
         result = ""
-        items = data[self.start_tag.key]
 
-        if len(items) > 0:
+        try:
+            items = data[self.start_tag.key]
+        except KeyError:
+            items = None
+
+        if items and len(items) > 0:
             for item in items:
                 part = self.part_inner
                 for child in self.children:
@@ -110,7 +114,11 @@ class WithBlock(Block):
             return parse_variables(result, data)
         else:
             result = ""
-            item = data[self.start_tag.key]
+
+            try:
+                item = data[self.start_tag.key]
+            except KeyError:
+                item = None
 
             if item:
                 for child in self.children:

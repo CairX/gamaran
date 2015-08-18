@@ -12,7 +12,7 @@
 * **Each** support variable for *index*.
 * **Each** support variable for *key*.
 * **Varibles** support for escaped and none escaped content.
-* Error handling for non existing data (KeyError).
+* ~~Error handling for non existing data (KeyError).~~
 * Error handling for improper nestling.
 * Create a main that take file paths and compiles to a result.
 * Documentation: Time for some?

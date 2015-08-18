@@ -67,9 +67,10 @@ if __name__ == "__main__":
         "multiple",
         "twice",
         "nested",
-        "else"
+        "else",
+        "none"
     ]
-    packages["with"] = ["single"]
+    packages["with"] = ["single", "none"]
     packages["comments-dashed"] = [
         "begin-newline",
         "begin-spaces",

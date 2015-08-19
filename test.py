@@ -59,7 +59,7 @@ def run_test(package, test):
 
 if __name__ == "__main__":
     packages = OrderedDict()
-    packages["global"] = ["single"]
+    packages["global"] = ["single", "escape"]
     packages["each"] = [
         "empty",
         "collection",

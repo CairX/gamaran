@@ -1,3 +1,4 @@
+import html
 import re
 
 
@@ -57,15 +58,24 @@ class Block:
         self.part_outer = template[self.start_tag.start:self.end_tag.end]
 
     def parse_variables(self, template, data):
-        tags = re.findall("{{[^#/!@].*?}}", template)
+        # None escaped.
+        matches = re.finditer("{{{(.*?)}}}", template)
+        for match in matches:
+            tag = match.group(0)
+            key = match.group(1)
+            value = data if key == "this" else data[key]
 
-        for tag in tags:
-            variable = tag[2:-2]
-            if variable == "this":
-                d = data
-            else:
-                d = data[variable]
-            template = template.replace(tag, str(d), 1)
+            template = template.replace(tag, str(value), 1)
+
+        # Escaped.
+        matches = re.finditer("{{([^#/!@].*?)}}", template)
+        for match in matches:
+            tag = match.group(0)
+            key = match.group(1)
+            value = data if key == "this" else data[key]
+
+            value = html.escape(str(value))
+            template = template.replace(tag, str(value), 1)
 
         return template
 

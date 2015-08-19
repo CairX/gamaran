@@ -1,0 +1,4 @@
+{
+	"escape": "<h1>Escaped</h1><p>An escaped section.</p>",
+	"none-escape": "<h1>None escaped</h1><p>Not escaped section.</p>"
+}

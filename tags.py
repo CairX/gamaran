@@ -63,19 +63,25 @@ class Block:
         for match in matches:
             tag = match.group(0)
             key = match.group(1)
-            value = data if key == "this" else data[key]
 
-            template = template.replace(tag, str(value), 1)
+            try:
+                value = data if key == "this" else data[key]
+                template = template.replace(tag, str(value), 1)
+            except KeyError:
+                continue
 
         # Escaped.
         matches = re.finditer("{{([^#/!@].*?)}}", template)
         for match in matches:
             tag = match.group(0)
             key = match.group(1)
-            value = data if key == "this" else data[key]
 
-            value = html.escape(str(value))
-            template = template.replace(tag, str(value), 1)
+            try:
+                value = data if key == "this" else data[key]
+                value = html.escape(str(value))
+                template = template.replace(tag, str(value), 1)
+            except KeyError:
+                continue
 
         return template
 

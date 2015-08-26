@@ -1,61 +1,68 @@
 # gamaran
 Static HTML generator with syntax inspired from [handlebarsjs](http://handlebarsjs.com/ "handlebarsjs").
 
-## Examples
+## Usage
 * [Variables](#variables)
-	* [Escaping](#escaping)
+	* [Variable Escaping](#variable-escaping)
 * [Each](#each)
-	* [else](#else)
-	* [this](#this)
-	* [@index](#index)
-	* [@key](#key)
+	* [Each else](#each-else)
+	* [Each this](#each-this)
+	* [Each @index](#each-index)
+	* [Each @key](#each-key)
 * [With](#with)
-	* [else](#else)
+	* [With else](#with-else)
 * [If / Unless](#if--unless)
-	* [else](#else)
+	* [If else](#if-else)
 * [Comments](#comments)
 
 ### Variables
-Data:
+Access to data is done through the key names **{{name}}** based on level of context.
+
+**Data**
 ```json
 {
 	"title": "The best title",
 	"content": "Massive body of text that explains everything."
 }
 ```
-Template:
+
+**Template**
 ```html
 <h1>{{title}}</h1>
 <p>{{content}}</p>
 ```
-Result:
+
+**Result**
 ```html
 <h1>The best title</h1>
 <p>Massive body of text that explains everything.</p>
 ```
 
-#### Escaping
-Data:
+#### Variable Escaping
+Variables are HTML escaped by default. To access the data unescaped use triple curly brackets.
+
+**Data**
 ```json
 {
 	"title": "<h1>The best title</h1>",
 	"content": "<p>Massive body of text that explains everything.</p>"
 }
 ```
-Template:
+
+**Template**
 ```html
 {{title}}
 {{{content}}}
 ```
-Result:
+
+**Result**
 ```html
 &lt;h1&gt;The best title&lt;/h1&gt;
 <p>Massive body of text that explains everything.</p>
 ```
 
-
 ### Each
-Data:
+**Data**
 ```json
 {
 	"articles": [
@@ -72,7 +79,8 @@ Data:
 	]
 }
 ```
-Template:
+
+**Template**
 ```html
 {#each articles}
 	<article>
@@ -81,7 +89,8 @@ Template:
 	</article>
 {/each}
 ```
-Result:
+
+**Result**
 ```html
 <article>
 	<h1>The best title</h1>
@@ -97,14 +106,15 @@ Result:
 </article>
 ```
 
-### else
-Data:
+#### Each else
+**Data**
 ```json
 {
 	"articles": []
 }
 ```
-Template:
+
+**Template**
 ```html
 {#each articles}
 	<article>
@@ -115,13 +125,14 @@ Template:
 	<p>No articles to view.</p>
 {/each}
 ```
-Result:
+
+**Result**
 ```html
 <p>No articles to view.</p>
 ```
 
-### this
-Data:
+#### Each this
+**Data**
 ```json
 {
 	"colors": [
@@ -133,7 +144,8 @@ Data:
 	]
 }
 ```
-Template:
+
+**Template**
 ```html
 <ul>
 {#each articles}
@@ -141,7 +153,8 @@ Template:
 {/each}
 </ul>
 ```
-Result:
+
+**Result**
 ```html
 <ul>
 	<li>Red</li>
@@ -152,8 +165,8 @@ Result:
 </ul>
 ```
 
-### @index
-Data:
+#### Each @index
+**Data**
 ```json
 {
 	"colors": [
@@ -165,13 +178,15 @@ Data:
 	]
 }
 ```
-Template:
+
+**Template**
 ```html
 {#each articles}
 	<p>{{@index}} {{this}}</p>
 {/each}
 ```
-Result:
+
+**Result**
 ```html
 <p>1. Red</p>
 <p>2. Yellow</p>
@@ -180,8 +195,8 @@ Result:
 <p>5. Purple</p>
 ```
 
-### @key
-Data:
+#### Each @key
+**Data**
 ```json
 {
 	"article": {
@@ -190,7 +205,8 @@ Data:
 	}
 }
 ```
-Template:
+
+**Template**
 ```html
 <dl>
 {{#each article}}
@@ -199,7 +215,8 @@ Template:
 {{/each}}
 </dl>
 ```
-Result:
+
+**Result**
 ```html
 <dl>
 	<dt>title:</dt>
@@ -209,8 +226,8 @@ Result:
 </dl>
 ```
 
-## With
-Data:
+### With
+**Data**
 ```json
 {
 	"article": {
@@ -219,7 +236,8 @@ Data:
 	}
 }
 ```
-Template:
+
+**Template**
 ```html
 
 {{#with article}}
@@ -227,20 +245,22 @@ Template:
 	<p>{{content}}</p>
 {{/with}}
 ```
-Result:
+
+**Result**
 ```html
 <h1>The best title</h1>
 <p>Massive body of text that explains everything.</p>
 ```
 
-### else
-Data:
+#### With else
+**Data**
 ```json
 {
 	"article": {}
 }
 ```
-Template:
+
+**Template**
 ```html
 {#each article}
 	<article>
@@ -251,40 +271,44 @@ Template:
 	<p>No articles to view.</p>
 {/each}
 ```
-Result:
+
+**Result**
 ```html
 <p>No articles to view.</p>
 ```
 
-## If / Unless
-Data:
+### If / Unless
+**Data**
 ```json
 {
 	"title": "The best title",
 	"content": "Massive body of text that explains everything."
 }
 ```
-Template:
+
+**Template**
 ```html
 <h1>{{title}}</h1>
 {{#if content}}
 	<p>{{content}}</p>
 {{/if}}
 ```
-Result:
+
+**Result**
 ```html
 <h1>The best title</h1>
 <p>Massive body of text that explains everything.</p>
 ```
 
-### else
-Data:
+#### If else
+**Data**
 ```json
 {
 	"title": "The best title"
 }
 ```
-Template:
+
+**Template**
 ```html
 <h1>{{title}}</h1>
 {{#if content}}
@@ -293,20 +317,22 @@ Template:
 	<p>No content.</p>
 {{/if}}
 ```
-Result:
+
+**Result**
 ```html
 <h1>The best title</h1>
 <p>No content.</p>
 ```
 
 ### Comments
-Template:
+**Template**
 ```html
 {{! This comment will not be in the output. }}
 {{!-- Any comments that must contain }} or other parser tokens should use this comment style. --}}
 <h1>Title</h1>
 ```
-Result:
+
+**Result**
 ```html
 <h1>Title</h1>
 ```

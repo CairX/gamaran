@@ -2,7 +2,7 @@ import re
 from tags import Tag, EachBlock, IfBlock, UnlessBlock, WithBlock
 
 
-def parse(template, data):
+def parse(template, data, clean=False):
     # Initiate with a global with-block that contains everything.
     start_tag = Tag("html", "html", 0, 0)
     end_tag = Tag("html", "html", len(template), len(template))
@@ -11,6 +11,9 @@ def parse(template, data):
 
     template = remove_dashed_comments(template)
     template = remove_simple_comments(template)
+
+    if clean:
+        template = clean_left(template)
 
     block = parse_blocks(template, block)
     result = block.combine(template, data)
@@ -44,6 +47,11 @@ def remove_simple_comments(template):
         template = template.replace(comment, "", 1)
 
     return template
+
+
+def clean_left(template):
+    pattern = "\n\s*({{)"
+    return re.sub(pattern, "\\1", template)
 
 
 def parse_blocks(template, block):

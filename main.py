@@ -1,6 +1,5 @@
 import argparse
 import json
-import sys
 
 from collections import OrderedDict
 from parser import parse
@@ -31,6 +30,11 @@ if __name__ == "__main__":
         action="version",
         version='%(prog)s 1.0')
 
+    parser.add_argument(
+        "--clean",
+        action="store_true",
+        help="remove indentation to the left of tags when on an empty line")
+
     args = parser.parse_args()
     template_path = args.template[0]
     data_path = args.data[0]
@@ -42,7 +46,7 @@ if __name__ == "__main__":
         with open(data_path) as data_file:
             data = json.load(data_file, object_pairs_hook=OrderedDict)
 
-        result = parse(template, data)
+        result = parse(template, data, args.clean)
 
         with open(result_path, "w") as result_file:
             result_file.write(str(result))

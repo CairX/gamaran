@@ -28,7 +28,9 @@ def run_test(package, test):
     data_path = "tests/{0}/{1}/data.json".format(package, test)
     template_path = "tests/{0}/{1}/template.html".format(package, test)
     expected_path = "tests/{0}/{1}/expected.html".format(package, test)
+    expected_clean_path = "tests/{0}/{1}/expected.clean.html".format(package, test)
     result_path = "tests/{0}/{1}/result.html".format(package, test)
+    result_clean_path = "tests/{0}/{1}/result.clean.html".format(package, test)
 
     with open(template_path) as template_file:
         template = template_file.read()
@@ -39,6 +41,9 @@ def run_test(package, test):
         else:
             data = []
 
+        # -------------------------------------------- #
+        # WITHOUT CLEAN OPTION
+        # -------------------------------------------- #
         result = parse(template, data)
 
         # Store the result for easier viewing when a test fails.
@@ -52,6 +57,25 @@ def run_test(package, test):
                 passed = True
             else:
                 passed = False
+                message += compare(expected, result)
+
+        # -------------------------------------------- #
+        # WITH CLEAN OPTION
+        # -------------------------------------------- #
+        result = parse(template, data, True)
+
+        # Store the result for easier viewing when a test fails.
+        with open(result_clean_path, "w") as result_file:
+            result_file.write(str(result))
+
+        # Validate the test.
+        with open(expected_clean_path) as expected_file:
+            expected = expected_file.read()
+            if result == expected:
+                passed = True
+            else:
+                passed = False
+                message += "--clean\n"
                 message += compare(expected, result)
 
         return passed, message

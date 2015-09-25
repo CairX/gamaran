@@ -9,11 +9,11 @@ def parse(template, data, clean=False):
     block = WithBlock(start_tag)
     block.end_tag = end_tag
 
-    template = remove_dashed_comments(template)
-    template = remove_simple_comments(template)
-
     if clean:
         template = clean_left(template)
+
+    template = remove_dashed_comments(template)
+    template = remove_simple_comments(template)
 
     block = parse_blocks(template, block)
     result = block.combine(template, data)
@@ -50,7 +50,7 @@ def remove_simple_comments(template):
 
 
 def clean_left(template):
-    pattern = "\n\s*({{)"
+    pattern = "\n\s*({{[#/!])"
     return re.sub(pattern, "\\1", template)
 
 

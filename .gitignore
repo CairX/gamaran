@@ -1,2 +1,3 @@
 tests/*/*/result.html
+tests/*/*/result.clean.html
 __pycache__/

@@ -1,4 +1,4 @@
-# gamaran
+# mustache-py
 Mustache template parser inspired by [handlebarsjs](http://handlebarsjs.com/ "handlebarsjs").
 
 ## Usage

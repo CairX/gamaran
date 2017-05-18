@@ -1,5 +1,5 @@
 # gamaran
-Static HTML generator with syntax inspired from [handlebarsjs](http://handlebarsjs.com/ "handlebarsjs").
+Mustache template parser inspired by [handlebarsjs](http://handlebarsjs.com/ "handlebarsjs").
 
 ## Usage
 * [Variables](#variables)

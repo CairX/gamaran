@@ -262,7 +262,7 @@ Variables are HTML escaped by default. To access the data unescaped use triple c
 
 **Template**
 ```html
-{#each article}
+{#with article}
 	<article>
 		<h1>{{title}}</h1>
 		<p>{{content}}</p>
